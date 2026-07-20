@@ -3,12 +3,12 @@ require "opentelemetry-api/src/api/id_generator/abstract_base"
 module OpenTelemetry
   struct IdGenerator::Random < API::AbstractIdGenerator::AbstractBase
     # Return a random sequence of 16 bytes for the trace id.
-    def trace_id
+    def trace_id : Slice(UInt8)
       Trace.prng.random_bytes(16)
     end
 
     # Return a random sequence of 8 bytes for the span id.
-    def span_id
+    def span_id : Slice(UInt8)
       Trace.prng.random_bytes(8)
     end
   end

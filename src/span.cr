@@ -15,13 +15,13 @@ module OpenTelemetry
     property wall_start : Time = OpenTelemetry.clock.utc
     property finish : Time::Span? = nil
     property wall_finish : Time? = nil
-    property events : Array(Event) = [] of Event
+    property events : Array(OpenTelemetry::API::AbstractEvent) = [] of OpenTelemetry::API::AbstractEvent
     property attributes : Hash(String, AnyAttribute) = {} of String => AnyAttribute
-    property parent : Span? = nil
-    property children : Array(Span) = [] of Span
-    property context : SpanContext = SpanContext.new
+    property parent : OpenTelemetry::API::AbstractSpan? = nil
+    property children : Array(OpenTelemetry::API::AbstractSpan) = [] of OpenTelemetry::API::AbstractSpan
+    property context : OpenTelemetry::API::AbstractSpanContext = SpanContext.new
     property kind : Kind = Kind::Internal
-    property status : Status = Status.new
+    property status : OpenTelemetry::API::AbstractStatus = Status.new
     property is_recording : Bool = true
 
     MATCH = /(?<span_id>[A-Fa-f0-9]{16})/
@@ -172,7 +172,7 @@ module OpenTelemetry
           value: Attribute.to_anyvalue(value))
       end
 
-      span.events = events.map(&.to_protobuf)
+      span.events = events.compact_map(&.to_protobuf)
 
       span
     end
@@ -193,7 +193,9 @@ module OpenTelemetry
           json.field "parentSpanId", parent.try(&.context.span_id.hexstring)
           json.field "kind", kind.value
           json.field "name", name
-          json.field "status", status.to_json
+          json.field "status" do
+            status.to_json(json)
+          end
           json.field "startTime", start_time_unix_nano
           json.field "endTime", end_time_unix_nano
           json.field "attributes" do

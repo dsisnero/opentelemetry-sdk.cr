@@ -25,7 +25,7 @@ module OpenTelemetry
       self.service_version = service_version if service_version
       self.schema_url = schema_url if schema_url
       self.exporter = exporter if exporter
-      self.trace_id = @provider.id_generator.trace_id
+      self.trace_id = @provider.id_generator.trace_id.not_nil!
     end
 
     def provider=(val)

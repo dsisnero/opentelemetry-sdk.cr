@@ -11,11 +11,11 @@ module OpenTelemetry
     @unique_identifier : Slice(UInt8) = Slice(UInt8).new(3, 0)
     @mutex : Crystal::SpinLock = Crystal::SpinLock.new
 
-    def trace_id
+    def trace_id : Slice(UInt8)
       CSUUID.unique.bytes
     end
 
-    def span_id
+    def span_id : Slice(UInt8)
       span_bytes = Slice(UInt8).new(8, 0)
       @mutex.sync do
         t = Time.local

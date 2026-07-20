@@ -20,7 +20,7 @@ module OpenTelemetry
     def initialize(@trace_id, @span_id, @parent_id, @trace_flags, @trace_state, @remote = false)
     end
 
-    def initialize(inherited_context : SpanContext)
+    def initialize(inherited_context : OpenTelemetry::API::AbstractSpanContext)
       @trace_id = inherited_context.trace_id
       @trace_state = inherited_context.trace_state
       @trace_flags = inherited_context.trace_flags
@@ -70,7 +70,7 @@ module OpenTelemetry
       @trace_state[val] = val2
     end
 
-    def self.build(inherited_context : SpanContext? = nil)
+    def self.build(inherited_context : OpenTelemetry::API::AbstractSpanContext? = nil)
       if inherited_context
         config = Config.new(inherited_context)
       else

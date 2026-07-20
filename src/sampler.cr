@@ -14,7 +14,7 @@ module OpenTelemetry
     end
 
     def should_sample(
-      context : SpanContext,
+      context : OpenTelemetry::API::AbstractSpanContext,
       name : String = "",
       trace_id : Slice(UInt8)? = nil,
       kind : OpenTelemetry::Span::Kind = OpenTelemetry::Span::Kind::Internal,

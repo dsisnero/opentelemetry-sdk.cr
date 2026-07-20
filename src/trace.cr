@@ -74,7 +74,7 @@ module OpenTelemetry
       self.service_name = service_name if service_name
       self.service_version = service_version if service_version
       self.schema_url = schema_url if schema_url
-      self.trace_id = @provider.id_generator.trace_id
+      self.trace_id = @provider.id_generator.trace_id.not_nil!
       span_context.trace_id = trace_id
       set_standard_resource_attributes
     end
@@ -215,7 +215,7 @@ module OpenTelemetry
     private def in_span_impl(span_name)
       span = Span.build(span_name) do |spx|
         spx.context = SpanContext.build(@span_context) do |ctx|
-          ctx.span_id = @provider.id_generator.span_id
+          ctx.span_id = @provider.id_generator.span_id.not_nil!
         end
       end
 

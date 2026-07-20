@@ -6,7 +6,7 @@ module OpenTelemetry
     property timestamp : Time::Span = OpenTelemetry.clock.monotonic
     property wall_timestamp : Time = OpenTelemetry.clock.utc
     getter attributes : Hash(String, AnyAttribute) = {} of String => AnyAttribute
-    property parent_span : Span? = nil
+    property parent_span : OpenTelemetry::API::AbstractSpan? = nil
 
     def initialize(@name)
     end
