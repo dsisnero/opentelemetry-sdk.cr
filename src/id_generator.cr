@@ -27,11 +27,11 @@ module OpenTelemetry
       end
     end
 
-    def trace_id
+    def trace_id : Slice(UInt8)
       @generator.trace_id
     end
 
-    def span_id
+    def span_id : Slice(UInt8)
       @generator.span_id
     end
 

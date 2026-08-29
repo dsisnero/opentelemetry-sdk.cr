@@ -10,14 +10,15 @@ license: "Apache 2.0"
 
 dependencies:
   opentelemetry-api:
-    github: wyhaines/opentelemetry-api.cr
-    branch: main
+    github: dsisnero/opentelemetry-api.cr
+    branch: codex/crystal-1.21-compat
   db:
     github: crystal-lang/crystal-db
   splay_tree_map:
     github: wyhaines/splay_tree_map.cr
   nbchannel:
-    github: wyhaines/nbchannel.cr
+    github: dsisnero/nbchannel.cr
+    branch: codex/crystal-1.21-compat
   csuuid:
     github: wyhaines/csuuid.cr
   time-ext:

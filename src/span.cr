@@ -15,13 +15,13 @@ module OpenTelemetry
     property wall_start : Time = OpenTelemetry.clock.utc
     property finish : Time::Span? = nil
     property wall_finish : Time? = nil
-    property events : Array(Event) = [] of Event
+    property events : Array(API::AbstractEvent) = [] of API::AbstractEvent
     property attributes : Hash(String, AnyAttribute) = {} of String => AnyAttribute
-    property parent : Span? = nil
-    property children : Array(Span) = [] of Span
-    property context : SpanContext = SpanContext.new
+    property parent : API::AbstractSpan? = nil
+    property children : Array(API::AbstractSpan) = [] of API::AbstractSpan
+    property context : API::AbstractSpanContext = SpanContext.new
     property kind : Kind = Kind::Internal
-    property status : Status = Status.new
+    property status : API::AbstractStatus = Status.new
     # ameba:disable Naming/QueryBoolMethods
     property is_recording : Bool = true
 
