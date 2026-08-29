@@ -160,7 +160,7 @@ module OpenTelemetry
                     @endpoint_uri.path,
                     body: body
                   )
-                  debug!(response)
+                  debug!(response.to_s)
                 end
               end
             end
