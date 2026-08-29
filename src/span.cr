@@ -173,7 +173,7 @@ module OpenTelemetry
           value: Attribute.to_anyvalue(value))
       end
 
-      span.events = events.map(&.to_protobuf)
+      span.events = events.compact_map(&.to_protobuf)
 
       span
     end
