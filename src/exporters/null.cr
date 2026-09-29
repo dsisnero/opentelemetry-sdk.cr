@@ -7,7 +7,7 @@ module OpenTelemetry
     # It will, however, log what it consumes if compiled with -DDEBUG.
     class Null < Base
       def start
-        loop_and_receive
+        spawn { loop_and_receive }
       end
 
       def handle(elements : Array(Elements))

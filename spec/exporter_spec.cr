@@ -2,6 +2,22 @@ require "./spec_helper"
 require "json"
 
 describe OpenTelemetry::Exporter do
+  it "does not block the caller when constructing the default null exporter" do
+    ready = Channel(OpenTelemetry::Exporter).new
+
+    spawn do
+      ready.send(OpenTelemetry::Exporter.new(:null))
+    end
+
+    select
+    when exporter = ready.receive
+      exporter.should be_a OpenTelemetry::Exporter
+      exporter.exporter.do_reap
+    when timeout(2.seconds)
+      fail "OpenTelemetry::Exporter.new(:null) blocked the calling fiber; exporter start must run in its own fiber"
+    end
+  end
+
   it "can export to an IO::Memory" do
     checkout_config do
       memory = IO::Memory.new

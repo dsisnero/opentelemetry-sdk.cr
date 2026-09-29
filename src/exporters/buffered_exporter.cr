@@ -15,7 +15,7 @@ module OpenTelemetry
       property batch_interval = 0.05
 
       def start
-        loop_and_receive
+        spawn { loop_and_receive }
       end
 
       def loop_and_receive
