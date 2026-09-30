@@ -1,5 +1,5 @@
 name: opentelemetry-sdk
-version: 0.6.5
+version: 0.6.6
 
 authors:
   - Kirk Haines <wyhaines@gmail.com>
@@ -11,7 +11,7 @@ license: "Apache 2.0"
 dependencies:
   opentelemetry-api:
     github: dsisnero/opentelemetry-api.cr
-    version: 0.5.2
+    version: 0.5.3
   db:
     github: crystal-lang/crystal-db
   splay_tree_map:
