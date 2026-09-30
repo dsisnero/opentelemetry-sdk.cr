@@ -21,37 +21,37 @@ module OpenTelemetry
       def loop_and_receive
         elements = [] of Elements
         elements_size = 0
-        mark = Time.monotonic
+        mark = Time.instant
         oldsize = 0
-        last_inspect = Time.monotonic
+        last_inspect = Time.instant
         loop do
-          # Consume elements into an internal buffer until the buffer is greater than
-          # the threshold size for a processing batch, or there is nothing left to
-          # consume.
-          while elements_size < @batch_threshold && (element = @buffer.receive?)
-            elements << element
-            elements_size += element.size
+          # NBChannel#receive? is deliberately non-blocking. Drain the buffer, then
+          # sleep for the configured interval so an empty buffer cannot monopolize
+          # the scheduler.
+          while elements_size < @batch_threshold && (buffered_element = @buffer.receive?)
+            elements << buffered_element
+            elements_size += buffered_element.size
           end
 
-          if oldsize != elements.size || (Time.monotonic - last_inspect).seconds > 1
+          if oldsize != elements.size || (Time.instant - last_inspect).seconds > 1
             oldsize = elements.size
-            last_inspect = Time.monotonic
+            last_inspect = Time.instant
             {% if flag? :DEBUG %}
-              puts "#{self.object_id} : #{elements.size} >= #{@batch_threshold} || #{(Time.monotonic - mark).seconds} >= #{@batch_latency}"
+              puts "#{self.object_id} : #{elements.size} >= #{@batch_threshold} || #{(Time.instant - mark).seconds} >= #{@batch_latency}"
             {% end %}
           end
           # If the internal buffer has reached the processing threshold size, or
           # if it has been longer than the batch_latency in seconds, then handle
           # each of the elements.
-          if elements.size >= @batch_threshold || (Time.monotonic - mark).seconds >= @batch_latency
+          if elements.size >= @batch_threshold || (Time.instant - mark).seconds >= @batch_latency
             handle(elements)
             elements.clear
             elements_size = 0
-            mark = Time.monotonic
+            mark = Time.instant
           end
 
           break if reaped?
-          sleep(Time::Span.new(nanoseconds: 1))
+          sleep(@batch_interval.seconds)
         end
       end
     end

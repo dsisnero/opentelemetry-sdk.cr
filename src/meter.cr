@@ -2,14 +2,24 @@ require "./meter/exceptions"
 require "./instrument"
 
 module OpenTelemetry
-  # Creates synchronous metric instruments. Exporter configuration and lifecycle
-  # stay with the application or a future metric provider.
+  # Creates synchronous metric instruments and retains their provider configuration.
   class Meter
     getter name : String
     getter version : String
     getter schema_url : String
+    getter exporter : Exporter?
+    getter interval : Float64?
+    getter provider : MeterProvider?
 
-    def initialize(@name = "", @version = "", @schema_url = "")
+    def initialize(
+      @name : String = "",
+      @version : String = "",
+      @schema_url : String = "",
+      @exporter : Exporter? = nil,
+      interval : Instrument::Number? = nil,
+      @provider : MeterProvider? = nil,
+    )
+      @interval = interval.try(&.to_f64)
     end
 
     def create_counter(name : String, unit : String = "", description : String = "") : Instrument::Counter

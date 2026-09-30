@@ -3,6 +3,39 @@ require "opentelemetry-api/interfaces"
 require "../src/meter"
 
 describe OpenTelemetry::Meter do
+  it "preserves provider and explicit meter configuration" do
+    provider_exporter = OpenTelemetry::Exporter.new(:null)
+    explicit_exporter = OpenTelemetry::Exporter.new(:null)
+    provider = OpenTelemetry::MeterProvider.new(
+      "provider-service",
+      "1.0.0",
+      "https://schema.example/provider",
+      provider_exporter)
+
+    inherited_meter = provider.meter
+    inherited_meter.name.should eq("provider-service")
+    inherited_meter.version.should eq("1.0.0")
+    inherited_meter.schema_url.should eq("https://schema.example/provider")
+    inherited_meter.exporter.should be(provider_exporter)
+    inherited_meter.provider.should be(provider)
+
+    meter = provider.meter(
+      "worker",
+      "2.0.0",
+      "https://schema.example/worker",
+      explicit_exporter,
+      0.5)
+    meter.name.should eq("worker")
+    meter.version.should eq("2.0.0")
+    meter.schema_url.should eq("https://schema.example/worker")
+    meter.exporter.should be(explicit_exporter)
+    meter.interval.should eq(0.5)
+    meter.provider.should be(provider)
+
+    provider_exporter.exporter.do_reap
+    explicit_exporter.exporter.do_reap
+  end
+
   it "creates the synchronous metric instruments required by metrics adapters" do
     meter = OpenTelemetry::Meter.new
     attributes = {} of String => OpenTelemetry::ValueTypes

@@ -83,15 +83,16 @@ module OpenTelemetry
           else
             span_id = span_id.hexbytes
           end
-          if trace_flags.is_a?(Slice(UInt8))
-            trace_flags = TraceFlags.new(trace_flags.hexstring.to_i(16))
-          elsif trace_flags.is_a?(Int)
-            trace_flags = TraceFlags.new(trace_flags)
-          elsif trace_flags.is_a?(TraceFlags)
-            trace_flags
-          else
-            trace_flags = TraceFlags.new(trace_flags.to_i(16))
-          end
+          trace_flags = case trace_flags
+                        when Slice(UInt8)
+                          TraceFlags.new(trace_flags.hexstring.to_i(16))
+                        when Int
+                          TraceFlags.new(trace_flags)
+                        when TraceFlags
+                          trace_flags
+                        else
+                          TraceFlags.new(trace_flags.to_i(16))
+                        end
 
           validate(version, trace_id, span_id, trace_flags)
 
